@@ -42,6 +42,16 @@ class Value:
         out._backward = _backward
 
         return out
+    
+    def exp(self):
+        e = math.exp(self.data)
+        out = Value(e, (self,), "exp")
+    
+        def _backward():
+          self.grad += e * out.grad
+        out._backward = _backward
+    
+        return out
 
     def relu(self):
         out = Value(0 if self.data < 0 else self.data, (self,), 'ReLU')
