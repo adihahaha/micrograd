@@ -42,6 +42,25 @@ class Layer(Module):
     def __repr__(self):
         return f"Layer of [{', '.join(str(n) for n in self.neurons)}]"
 
+class Softmax(Module):
+
+    def __init__(self, nin, nout):
+        self.neurons = [Neuron(nin, nonlin=False) for _ in range(nout)]
+      
+    def __call__(self, x):
+        z_values = [n(x) for n in self.neurons]    #linear activations from neurons
+        max_z = max(z.data for z in z_values)
+        numerators = [(z - max_z).exp() for z in z_values]
+        denominator = sum(numerators)
+        outs = [n / denominator for n in numerators] #softmax output
+        return outs[0] if len(outs) == 1 else outs
+    
+    def parameters(self):
+        return [p for neuron in self.neurons for p in neuron.parameters()]
+  
+    def __repr__(self):
+        return f"Softmax Layer of [{', '.join(str(n) for n in self.neurons)}]"
+
 class MLP(Module):
 
     def __init__(self, nin, nouts):
