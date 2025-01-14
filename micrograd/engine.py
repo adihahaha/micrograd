@@ -52,6 +52,16 @@ class Value:
         out._backward = _backward
     
         return out
+    
+    def ln(self):
+        clipped_out = max(self.data, 1e-10)
+        out = Value(math.log(clipped_out), (self,), "log_e")
+    
+        def _backward():
+          self.grad += (1 / clipped_out) * out.grad
+        out._backward = _backward
+    
+        return out
 
     def relu(self):
         out = Value(0 if self.data < 0 else self.data, (self,), 'ReLU')
