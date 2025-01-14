@@ -71,6 +71,16 @@ class Value:
         out._backward = _backward
 
         return out
+    
+    def tanh(self):
+        t = math.tanh(self.data)
+        out = Value(t, (self,), "tanh")
+    
+        def _backward():
+          self.grad += (1 - t**2) * out.grad
+        out._backward = _backward
+    
+        return out
 
     def backward(self):
 
